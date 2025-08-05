@@ -1,0 +1,44 @@
+{
+  "name": "rag-langgraph",
+  "version": "1.0.0",
+  "description": "Hierarchical agent system with Weaviate vector database and LangGraph",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "setup": "node setup.js",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "test": "node test-client.js",
+    "test:comprehensive": "node tests/comprehensive-tests.js",
+    "test:integration": "node tests/integration-tests.js",
+    "test:all": "npm run test && npm run test:comprehensive && npm run test:integration",
+    "examples": "node examples/usage-examples.js"
+  },
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "@langchain/core": "^0.3.58",
+    "@langchain/google-genai": "^0.2.16",
+    "@langchain/langgraph": "^0.4.2",
+    "@langchain/weaviate": "^0.2.1",
+    "axios": "^1.6.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "langchain": "^0.3.30",
+    "weaviate-ts-client": "^1.5.0"
+  },
+  "devDependencies": {
+    "chai": "^4.3.7",
+    "nodemon": "^3.0.2"
+  },
+  "keywords": [
+    "rag",
+    "langgraph",
+    "weaviate",
+    "ai",
+    "agent"
+  ],
+  "author": "",
+  "license": "MIT"
+}
