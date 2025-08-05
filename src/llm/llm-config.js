@@ -7,6 +7,12 @@ class LLMConfig {
     }
 
     createLLM() {
+        // Check if Google API is disabled due to quota issues
+        if (process.env.DISABLE_GOOGLE_API === 'true') {
+            console.log('⚠️ Google API disabled due to quota issues, using mock LLM');
+            return this.createMockLLM();
+        }
+        
         // Try to use Google Gemini first
         if (process.env.GOOGLE_API_KEY && process.env.GOOGLE_API_KEY.trim() !== '') {
             try {
@@ -27,10 +33,19 @@ class LLMConfig {
                         console.log(`✅ Google Gemini API initialized successfully with ${config.modelName}`);
                         return {
                             invoke: async (messages) => {
-                                const lastMessage = messages[messages.length - 1];
-                                const result = await model.generateContent(lastMessage.content);
-                                const response = await result.response;
-                                return { content: response.text() };
+                                try {
+                                    const lastMessage = messages[messages.length - 1];
+                                    const result = await model.generateContent(lastMessage.content);
+                                    const response = await result.response;
+                                    return { content: response.text() };
+                                } catch (error) {
+                                    console.warn(`⚠️ Google Gemini API error: ${error.message}`);
+                                    if (error.message.includes('429') || error.message.includes('quota')) {
+                                        console.log('🔄 Falling back to mock LLM due to quota exceeded');
+                                        return this.createMockLLM().invoke(messages);
+                                    }
+                                    throw error;
+                                }
                             }
                         };
                     } catch (modelError) {
@@ -50,6 +65,10 @@ class LLMConfig {
         }
 
         // Fallback to mock implementation
+        return this.createMockLLM();
+    }
+
+    createMockLLM() {
         return {
             invoke: async (messages) => {
                 // Mock response for local LLM
@@ -137,6 +156,13 @@ class LLMConfig {
             return await this.llm.invoke(messages);
         } catch (error) {
             console.error('❌ Error invoking LLM:', error);
+            
+            // Check if it's a rate limit error
+            if (error.message.includes('429') || error.message.includes('quota')) {
+                console.log('🔄 Rate limit exceeded, using mock LLM');
+                return this.createMockLLM().invoke(messages);
+            }
+            
             // Return a fallback response
             return {
                 content: 'I encountered an error while processing your request. Please try again.'

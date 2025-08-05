@@ -13,7 +13,14 @@
     "test:comprehensive": "node tests/comprehensive-tests.js",
     "test:integration": "node tests/integration-tests.js",
     "test:all": "npm run test && npm run test:comprehensive && npm run test:integration",
-    "examples": "node examples/usage-examples.js"
+    "examples": "node examples/usage-examples.js",
+    "quota:check": "node scripts/manage-api-quota.js check",
+    "quota:disable": "node scripts/manage-api-quota.js disable",
+    "quota:enable": "node scripts/manage-api-quota.js enable",
+    "quota:solutions": "node scripts/manage-api-quota.js solutions",
+    "quota:config": "node scripts/manage-api-quota.js config",
+    "disable-google-api": "node scripts/manage-api-quota.js disable",
+    "enable-google-api": "node scripts/manage-api-quota.js enable"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
